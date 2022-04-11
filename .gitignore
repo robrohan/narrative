@@ -2,3 +2,8 @@
 *~
 build
 
+stage0.*
+stage1.*
+*.pdf
+
+
