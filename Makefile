@@ -34,7 +34,7 @@ stage1:
 	./build/narrative   \
 		-b "/*"           \
 		-e "*/"           \
-		-o $(STAGE1).md   \
+		-o ./$(STAGE1).md   \
 		-i ./$(STAGE0)$(PROJECT_EXT)
 
 stage2:

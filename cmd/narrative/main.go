@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
@@ -11,11 +12,10 @@ import (
 var build = "develop"
 
 type Config struct {
-	Start     string `conf:"short:s,default:/*"`
-	End       string `conf:"short:e,default:*/"`
-	MdComment string `conf:"default:'    '"`
-	Input     string `conf:"short:i,required"`
-	Output    string `conf:"short:o,default:final.md"`
+	Start  string `conf:"short:s,default:/*"`
+	End    string `conf:"short:e,default:*/"`
+	Input  string `conf:"short:i,required"`
+	Output string `conf:"short:o,default:final.md"`
 }
 
 func run() error {
@@ -34,7 +34,55 @@ func run() error {
 		return err
 	}
 
-	log.Printf("%v", cfg)
+	code_mode := false
+	{
+		file, err := os.Open(cfg.Input)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fout, err := os.Create(cfg.Output)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer file.Close()
+		defer fout.Close()
+
+		scanner := bufio.NewScanner(file)
+		line := ""
+		for scanner.Scan() {
+			line = scanner.Text()
+
+			if line == cfg.Start {
+				code_mode = true
+				// fmt.Println("```")
+				continue
+			}
+			if line == cfg.End {
+				code_mode = false
+				// fmt.Println("```")
+				continue
+			}
+
+			if code_mode {
+				// fmt.Println(line)
+				_, err := fmt.Fprintf(fout, "%s\n", line)
+				if err != nil {
+					log.Fatal(err)
+				}
+			} else {
+				// fmt.Printf("    %s\n", line)
+				_, err := fmt.Fprintf(fout, "     %s\n", line)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+		}
+		if err := scanner.Err(); err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	// log.Printf("%v", cfg)
 
 	return nil
 }
