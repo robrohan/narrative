@@ -34,8 +34,9 @@ func run() error {
 		return err
 	}
 
-	code_mode := false
 	{
+		code_mode := false
+
 		file, err := os.Open(cfg.Input)
 		if err != nil {
 			log.Fatal(err)
@@ -54,23 +55,19 @@ func run() error {
 
 			if line == cfg.Start {
 				code_mode = true
-				// fmt.Println("```")
 				continue
 			}
 			if line == cfg.End {
 				code_mode = false
-				// fmt.Println("```")
 				continue
 			}
 
 			if code_mode {
-				// fmt.Println(line)
 				_, err := fmt.Fprintf(fout, "%s\n", line)
 				if err != nil {
 					log.Fatal(err)
 				}
 			} else {
-				// fmt.Printf("    %s\n", line)
 				_, err := fmt.Fprintf(fout, "     %s\n", line)
 				if err != nil {
 					log.Fatal(err)
@@ -81,8 +78,6 @@ func run() error {
 			log.Fatal(err)
 		}
 	}
-
-	// log.Printf("%v", cfg)
 
 	return nil
 }
