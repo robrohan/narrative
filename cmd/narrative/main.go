@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
 
@@ -16,6 +17,41 @@ type Config struct {
 	End    string `conf:"short:e,default:*/"`
 	Input  string `conf:"short:i,required"`
 	Output string `conf:"short:o,default:final.md"`
+}
+
+func parse(cfg Config, file io.Reader, fout io.Writer) {
+	code_mode := false
+
+	scanner := bufio.NewScanner(file)
+	line := ""
+	for scanner.Scan() {
+		line = scanner.Text()
+
+		if line == cfg.Start {
+			code_mode = true
+			continue
+		}
+		if line == cfg.End {
+			code_mode = false
+			continue
+		}
+
+		if code_mode {
+			_, err := fmt.Fprintf(fout, "%s\n", line)
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			_, err := fmt.Fprintf(fout, "     %s\n", line)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
 }
 
 func run() error {
@@ -35,48 +71,22 @@ func run() error {
 	}
 
 	{
-		code_mode := false
-
 		file, err := os.Open(cfg.Input)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fout, err := os.Create(cfg.Output)
+		//fout, err := os.Create(cfg.Output)
+		//if err != nil {
+		//	log.Fatal(err)
+		//}
+		fout, err := os.OpenFile(cfg.Output, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer file.Close()
 		defer fout.Close()
 
-		scanner := bufio.NewScanner(file)
-		line := ""
-		for scanner.Scan() {
-			line = scanner.Text()
-
-			if line == cfg.Start {
-				code_mode = true
-				continue
-			}
-			if line == cfg.End {
-				code_mode = false
-				continue
-			}
-
-			if code_mode {
-				_, err := fmt.Fprintf(fout, "%s\n", line)
-				if err != nil {
-					log.Fatal(err)
-				}
-			} else {
-				_, err := fmt.Fprintf(fout, "     %s\n", line)
-				if err != nil {
-					log.Fatal(err)
-				}
-			}
-		}
-		if err := scanner.Err(); err != nil {
-			log.Fatal(err)
-		}
+		parse(cfg, file, fout)
 	}
 
 	return nil
