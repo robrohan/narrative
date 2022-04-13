@@ -18,30 +18,27 @@ clean: clean_run
 ##################################################################
 
 PROJECT_EXT=.tf
-PROJECT_DIR=../aws-infrastructure/
+PROJECT_DIR=../wefx/
 OUTPUT=final
 
-STAGE0=stage0
 STAGE1=stage1
 
-stage0:
-	cat `find $(PROJECT_DIR)                  \
-		-name "*$(PROJECT_EXT)"                 \
-		-not -path "$(PROJECT_DIR).terraform/*" \
-		| sort` > $(STAGE0)$(PROJECT_EXT)
-
 stage1:
-	./build/narrative   \
-		-b "/*"           \
-		-e "*/"           \
-		-o ./$(STAGE1).md   \
-		-i ./$(STAGE0)$(PROJECT_EXT)
+	rm -f ./$(STAGE1).md
+	./build/narrative              \
+		-b "/*"                      \
+		-e "*/"                      \
+		-i $(PROJECT_DIR)/NARRATIVE  \
+		-o ./$(STAGE1).md
 
 stage2:
 # sudo apt-get install groff pandoc
+# sudo apt-get install texlive-xetex
+
 # pandoc -t ms -f markdown out.md -o temp.pdf
 # --bibliography testlib.bib
-	pandoc -s -t pdf -f markdown $(STAGE1).md -o $(OUTPUT).pdf
+#	pandoc -s -t pdf -f markdown $(STAGE1).md -o $(OUTPUT).pdf
+	pandoc --pdf-engine=xelatex -s -t pdf -f markdown $(STAGE1).md -o $(OUTPUT).pdf 
 #	pandoc -s -t pdf -f markdown+raw_tex out.md -o temp.pdf
 
 html:
