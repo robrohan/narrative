@@ -38,7 +38,11 @@ stage2:
 # pandoc -t ms -f markdown out.md -o temp.pdf
 # --bibliography testlib.bib
 #	pandoc -s -t pdf -f markdown $(STAGE1).md -o $(OUTPUT).pdf
-	pandoc --pdf-engine=xelatex -s -t pdf -f markdown $(STAGE1).md -o $(OUTPUT).pdf 
+	cp $(PROJECT_DIR)docs/bibliography.bib ./bibliography.bib
+	pandoc --pdf-engine=xelatex -s -t pdf \
+		--citeproc \
+		-f markdown $(STAGE1).md \
+		-o $(OUTPUT).pdf 
 #	pandoc -s -t pdf -f markdown+raw_tex out.md -o temp.pdf
 
 html:

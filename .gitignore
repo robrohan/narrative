@@ -2,8 +2,8 @@
 *~
 build
 
+bibliography.bib
 stage0.*
 stage1.*
 *.pdf
-
 
