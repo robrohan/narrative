@@ -1,3 +1,17 @@
+/*
+
+# Includes
+
+Here we are importing several packages. Since this application mostly just combines
+files and concatenates strings, almost all of these imports are to support those
+activities.
+
+The _ardanlabs/conf_ include is a library to help make using command line parameters a
+bit easier. More can be seen on their website ...
+
+[@DonaldKnuthLiterateProgramming_2016_WebofStories-LifeStoriesofRemarkablePeople]
+
+*/
 package main
 
 import (
@@ -12,8 +26,23 @@ import (
 	"github.com/ardanlabs/conf"
 )
 
+/*
+
+This _build_ variable will be overwritten by our build script. This value will be
+the git hash of the current, build time commit.
+
+*/
 var build = "develop"
 
+/*
+
+# Config Struct
+
+This structure is used to hold the command line parameters passed when the application
+was started. Note that only _input_ is required, and _input_ needs to be a line sparated
+file that has a list of files to concatenate together.
+
+*/
 type Config struct {
 	Start  string `conf:"short:s,default:/*"`
 	End    string `conf:"short:e,default:*/"`
@@ -21,6 +50,11 @@ type Config struct {
 	Output string `conf:"short:o,default:final.md"`
 }
 
+/*
+
+# Parse the NARRATIVE File
+
+*/
 func parseHeader(cfg Config, log *log.Logger) {
 	// the narrative config file with the list of files we'll parse
 	narrativeFile, err := os.Open(cfg.Input)
@@ -58,6 +92,11 @@ func parseHeader(cfg Config, log *log.Logger) {
 	}
 }
 
+/*
+
+# Parse a Markdown File
+
+*/
 func parse(cfg Config, log *log.Logger, filePath string, fout io.Writer) {
 	code_mode := false
 	file, err := os.Open(filePath)
@@ -109,6 +148,11 @@ func parse(cfg Config, log *log.Logger, filePath string, fout io.Writer) {
 
 }
 
+/*
+
+# Run Wrapper
+
+*/
 func run(log *log.Logger) error {
 	cfg := Config{}
 	if err := conf.Parse(os.Args[1:], "NT", &cfg); err != nil {
@@ -128,6 +172,11 @@ func run(log *log.Logger) error {
 	return nil
 }
 
+/*
+
+# Program Main Entry
+
+*/
 func main() {
 	log := log.New(os.Stdout, "NT: ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 

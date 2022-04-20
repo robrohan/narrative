@@ -7,7 +7,8 @@ lang: en-GB
 toc: true
 papersize: A4
 fontfamily: mathptmx
-fontsize: 11pt
+fontsize: 12pt
+bibliography: bibliography.bib
 geometry:
 - top=30mm
 - left=20mm

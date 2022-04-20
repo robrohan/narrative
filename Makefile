@@ -16,15 +16,19 @@ test:
 # Combine all the source files into a single file
 # that can be used by all the to_* tasks below
 run:
+	rm -f $(PROJECT_DIR)/$(OUTPUT_NAME).md
 	go run cmd/narrative/main.go \
 		-i $(PROJECT_DIR)/NARRATIVE \
 		-o $(PROJECT_DIR)/$(OUTPUT_NAME).md
 
 to_pdf:
+# We cd here so that we can include bibliography files using
+# an include path in the header that make sense
+	cd $(PROJECT_DIR); \
 	$(PANDOC) --pdf-engine=xelatex -s -t pdf \
 		--citeproc \
-		-f markdown $(PROJECT_DIR)/$(OUTPUT_NAME).md \
-		-o $(PROJECT_DIR)/$(OUTPUT_NAME).pdf
+		-f markdown $(OUTPUT_NAME).md \
+		-o $(OUTPUT_NAME).pdf
 
 to_manpage:
 	$(PANDOC) -s -t man \
