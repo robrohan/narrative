@@ -1,6 +1,10 @@
 .PHONY: build clean test
 
 hash = $(shell git log --pretty=format:'%h' -n 1)
+PANDOC?=pandoc
+
+OUTPUT_NAME?=final
+PROJECT_DIR?=./testdata
 
 build: clean
 	mkdir -p build
@@ -9,54 +13,35 @@ build: clean
 test:
 	go test ./...
 
+# Combine all the source files into a single file
+# that can be used by all the to_* tasks below
 run:
-	go run cmd/narrative/main.go
+	go run cmd/narrative/main.go \
+		-i $(PROJECT_DIR)/NARRATIVE \
+		-o $(PROJECT_DIR)/$(OUTPUT_NAME).md
 
-clean: clean_run
-	rm -rf build
-
-##################################################################
-
-PROJECT_EXT=.tf
-PROJECT_DIR=../wefx/
-OUTPUT=final
-
-STAGE1=stage1
-
-stage1:
-	rm -f ./$(STAGE1).md
-	./build/narrative              \
-		-b "/*"                      \
-		-e "*/"                      \
-		-i $(PROJECT_DIR)/NARRATIVE  \
-		-o ./$(STAGE1).md
-
-stage2:
-# sudo apt-get install groff pandoc
-# sudo apt-get install texlive-xetex
-
-# pandoc -t ms -f markdown out.md -o temp.pdf
-# --bibliography testlib.bib
-#	pandoc -s -t pdf -f markdown $(STAGE1).md -o $(OUTPUT).pdf
-	cp $(PROJECT_DIR)docs/bibliography.bib ./bibliography.bib
-	pandoc --pdf-engine=xelatex -s -t pdf \
+to_pdf:
+	$(PANDOC) --pdf-engine=xelatex -s -t pdf \
 		--citeproc \
-		-f markdown $(STAGE1).md \
-		-o $(OUTPUT).pdf 
-#	pandoc -s -t pdf -f markdown+raw_tex out.md -o temp.pdf
+		-f markdown $(PROJECT_DIR)/$(OUTPUT_NAME).md \
+		-o $(PROJECT_DIR)/$(OUTPUT_NAME).pdf
 
-html:
-	pandoc -s -t html $(STAGE1).md -o $(OUTPUT).html
+to_manpage:
+	$(PANDOC) -s -t man \
+		-f markdown $(PROJECT_DIR)/$(OUTPUT_NAME).md \
+		-o $(PROJECT_DIR)/$(OUTPUT_NAME).1
+	gzip $(PROJECT_DIR)/$(OUTPUT_NAME).1
+# Example reading:
+#	man $(PROJECT_DIR)/$(OUTPUT_NAME).1.gz
 
-man:
-	pandoc -s -t man -f markdown $(STAGE1).md -o $(OUTPUT).1
-	gzip $(OUTPUT).1
-#	man ./$(OUTPUT).1.gz
+to_html:
+	$(PANDOC) -s -t html \
+		-f markdown $(PROJECT_DIR)/$(OUTPUT_NAME).md \
+		-o $(PROJECT_DIR)/$(OUTPUT).html
 
-slides:
-	pandoc -s -t beamer $(STAGE1).md -o $(OUTPUT).pdf
+clean:
+	rm -rf build
+	rm -f ./testdata/final.*
 
-clean_run:
-	rm -f $(STAGE0)$(PROJECT_EXT)
-	rm -f $(STAGE1).md
-	rm -f $(OUTPUT).*
+install_linux:
+	apt-get install groff pandoc texlive-xetex

@@ -1,0 +1,5 @@
+# This file is used to define the order in which
+# files should be merged together
+header.md
+../cmd/narrative/main.go
+footer.md
