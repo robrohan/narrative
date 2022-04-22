@@ -47,5 +47,28 @@ clean:
 	rm -rf build
 	rm -f ./testdata/final.*
 
-install_linux:
-	apt-get install groff pandoc texlive-xetex
+#install_linux:
+#	apt-get install groff pandoc texlive-xetex
+
+####################################################################
+
+docker_build:
+	docker build . -t narrative
+
+docker_run:
+	rm -f ./testdata/manual_1.md
+	docker run -it \
+		-v $(shell pwd):/root/workspace \
+		narrative \
+			-i ./workspace/testdata/NARRATIVE \
+			-o ./workspace/testdata/manual_1.md
+
+docker_run_pdf:
+	docker run -it \
+		-v $(shell pwd):/root/workspace \
+		robrohan/pandoc --pdf-engine=xelatex -s -t pdf \
+		--citeproc \
+		-f markdown ./workspace/testdata/manual_1.md \
+		-o ./workspace/testdata/manual_1.pdf
+
+
