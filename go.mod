@@ -1,4 +1,4 @@
-module robrohan.com/narrative
+module github.com/robrohan/narrative
 
 go 1.18
 
