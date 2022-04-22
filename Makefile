@@ -3,7 +3,7 @@
 hash = $(shell git log --pretty=format:'%h' -n 1)
 PANDOC?=pandoc
 
-OUTPUT_NAME?=final
+OUTPUT_NAME?=manual
 PROJECT_DIR?=./testdata
 
 build: clean
@@ -21,7 +21,20 @@ run:
 		-i $(PROJECT_DIR)/NARRATIVE \
 		-o $(PROJECT_DIR)/$(OUTPUT_NAME).md
 
-to_pdf:
+clean:
+	rm -rf build
+	rm -f $(PROJECT_DIR)/$(OUTPUT_NAME).*
+
+docker_build:
+	docker build . -t narrative
+
+install_linux:
+	apt-get install groff pandoc texlive-xetex
+
+####################################################################
+# Examples of creating outputs using local installed pandoc
+
+to_pdf: run
 # We cd here so that we can include bibliography files using
 # an include path in the header that make sense
 	cd $(PROJECT_DIR); \
@@ -30,45 +43,39 @@ to_pdf:
 		-f markdown $(OUTPUT_NAME).md \
 		-o $(OUTPUT_NAME).pdf
 
-to_manpage:
+to_manpage: run
+	cd $(PROJECT_DIR); \
 	$(PANDOC) -s -t man \
-		-f markdown $(PROJECT_DIR)/$(OUTPUT_NAME).md \
-		-o $(PROJECT_DIR)/$(OUTPUT_NAME).1
-	gzip $(PROJECT_DIR)/$(OUTPUT_NAME).1
-# Example reading:
+		--citeproc \
+		-f markdown $(OUTPUT_NAME).md \
+		-o $(OUTPUT_NAME).1 \
+	; \
+	gzip $(OUTPUT_NAME).1
+# Example reading the output:
 #	man $(PROJECT_DIR)/$(OUTPUT_NAME).1.gz
 
-to_html:
+to_html: run
+	cd $(PROJECT_DIR); \
 	$(PANDOC) -s -t html \
-		-f markdown $(PROJECT_DIR)/$(OUTPUT_NAME).md \
-		-o $(PROJECT_DIR)/$(OUTPUT).html
-
-clean:
-	rm -rf build
-	rm -f ./testdata/final.*
-
-#install_linux:
-#	apt-get install groff pandoc texlive-xetex
+		--citeproc \
+		-f markdown $(OUTPUT_NAME).md \
+		-o $(OUTPUT_NAME).html
 
 ####################################################################
-
-docker_build:
-	docker build . -t narrative
+# Examples of creating outputs using docker containers
 
 docker_run:
 	rm -f ./testdata/manual_1.md
-	docker run -it \
+	docker run --rm -it \
 		-v $(shell pwd):/root/workspace \
 		narrative \
 			-i ./workspace/testdata/NARRATIVE \
 			-o ./workspace/testdata/manual_1.md
 
 docker_run_pdf:
-	docker run -it \
+	docker run --rm -it \
 		-v $(shell pwd):/root/workspace \
 		robrohan/pandoc --pdf-engine=xelatex -s -t pdf \
 		--citeproc \
 		-f markdown ./workspace/testdata/manual_1.md \
 		-o ./workspace/testdata/manual_1.pdf
-
-
