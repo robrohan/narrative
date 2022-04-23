@@ -65,17 +65,17 @@ to_html: run
 # Examples of creating outputs using docker containers
 
 docker_run:
-	rm -f ./testdata/manual_1.md
+	rm -f ./testdata/manual.md
 	docker run --rm -it \
 		-v $(shell pwd):/root/workspace \
 		narrative \
 			-i ./workspace/testdata/NARRATIVE \
-			-o ./workspace/testdata/manual_1.md
+			-o ./workspace/testdata/manual.md
 
-docker_run_pdf:
+docker_run_pdf: docker_run
 	docker run --rm -it \
-		-v $(shell pwd):/root/workspace \
+		-v $(shell pwd)/testdata:/root/workspace \
 		robrohan/pandoc --pdf-engine=xelatex -s -t pdf \
 		--citeproc \
-		-f markdown ./workspace/testdata/manual_1.md \
-		-o ./workspace/testdata/manual_1.pdf
+		-f markdown ./manual.md \
+		-o ./manual.pdf
