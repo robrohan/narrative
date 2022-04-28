@@ -6,6 +6,7 @@ RUN make build
 
 FROM alpine:3.15
 RUN apk --no-cache add ca-certificates
-WORKDIR /root/
+WORKDIR /root
 COPY --from=builder /go/src/github.com/robrohan/narrative/build/ ./
-ENTRYPOINT ["./narrative"]
+WORKDIR /root/workspace
+ENTRYPOINT ["/root/narrative"]

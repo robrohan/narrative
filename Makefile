@@ -5,6 +5,7 @@ PANDOC?=pandoc
 
 OUTPUT_NAME?=manual
 PROJECT_DIR?=./testdata
+DOCKER_NAME?=robrohan/narrative
 
 build: clean
 	mkdir -p build
@@ -26,7 +27,10 @@ clean:
 	rm -f $(PROJECT_DIR)/$(OUTPUT_NAME).*
 
 docker_build:
-	docker build . -t narrative
+	docker build . -t $(DOCKER_NAME)
+
+docker_push:
+	docker push $(DOCKER_NAME)
 
 install_linux:
 	apt-get install groff pandoc texlive-xetex
@@ -68,9 +72,9 @@ docker_run:
 	rm -f ./testdata/manual.md
 	docker run --rm -it \
 		-v $(shell pwd):/root/workspace \
-		narrative \
-			-i ./workspace/testdata/NARRATIVE \
-			-o ./workspace/testdata/manual.md
+		$(DOCKER_NAME) \
+			-i ./testdata/NARRATIVE \
+			-o ./testdata/manual.md
 
 docker_run_pdf: docker_run
 	docker run --rm -it \
