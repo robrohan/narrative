@@ -79,7 +79,7 @@ docker_run:
 docker_run_pdf: docker_run
 	docker run --rm -it \
 		-v $(shell pwd)/testdata:/root/workspace \
-		robrohan/pandoc --pdf-engine=xelatex -s -t pdf \
+		robrohan/ubuntu-pandoc --pdf-engine=xelatex -s -t pdf \
 		--citeproc \
 		-f markdown ./manual.md \
 		-o ./manual.pdf
