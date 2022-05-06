@@ -7,7 +7,7 @@ jobs:
         steps:
           - name: Check out the repo
             uses: actions/checkout@v2
-          - name: Combine code into one md file
+          - name: Combine code into one main md file
             uses: addnab/docker-run-action@v3
             with:
                 image: robrohan/narrative:latest
@@ -16,4 +16,15 @@ jobs:
                     /root/narrative \
                         -i ./testdata/NARRATIVE \
                         -o ./testdata/manual.md
+          - name: Run pandoc against main md file
+            uses: addnab/docker-run-action@v3
+            with:
+                image: robrohan/pandoc:latest
+                options: -v ${{ github.workspace }}/testdata:/root/workspace
+                run: |
+                    /root/.cabal/bin/pandoc
+                        --pdf-engine=xelatex -s -t pdf \
+                        --citeproc \
+                        -f markdown ./manual.md \
+                        -o ./manual.pdf
 
