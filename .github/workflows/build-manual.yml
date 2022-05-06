@@ -27,8 +27,8 @@ jobs:
                         --citeproc                     \
                         -f markdown ./manual.md        \
                         -o ./manual.pdf
-           - name: Upload build artifacts
-             uses: actions/upload-artifact@v3
-             with:
-                 name: manual.pdf
-                 path: ${{ github.workspace }}/artifact/manual.pdf
+          - name: Upload build artifacts
+            uses: actions/upload-artifact@v3
+            with:
+                name: manual.pdf
+                path: ${{ github.workspace }}/artifact/manual.pdf
