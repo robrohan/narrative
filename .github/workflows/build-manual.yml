@@ -22,9 +22,9 @@ jobs:
                 image: robrohan/pandoc:latest
                 options: -v ${{ github.workspace }}/testdata:/root/workspace
                 run: |
-                    /root/.cabal/bin/pandoc
+                    /root/.cabal/bin/pandoc            \
                         --pdf-engine=xelatex -s -t pdf \
-                        --citeproc \
-                        -f markdown ./manual.md \
+                        --citeproc                     \
+                        -f markdown ./manual.md        \
                         -o ./manual.pdf
 
