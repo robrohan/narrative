@@ -1,0 +1,19 @@
+name: Build Narrative Manual
+on: [push]
+jobs:
+    compile:
+        name: Build markdown and pdf
+        runs-on: ubuntu-latest
+        steps:
+          - name: Check out the repo
+            uses: actions/checkout@v2
+          - name: Combine code into one md file
+            uses: addnab/docker-run-action@v3
+            with:
+                image: robrohan/narrative:latest
+                options: -v ${{ github.workspace }}:/root/workspace
+                run: |
+                    /root/narrative \
+                        -i ./testdata/NARRATIVE \
+                        -o ./testdata/manual.md
+
