@@ -3,7 +3,7 @@ Marker:
     # Ext should be in alpha order
     - Ext: ["c","go","h","js","tf","ts"]
       Start: "/*"
-      End: "*\\"
+      End: "*/"
     - Ext: ["bash","sh"]
       Start: "<< comment"
       End: "comment"

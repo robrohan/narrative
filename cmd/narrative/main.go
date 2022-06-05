@@ -4,7 +4,7 @@
 
 Narrative is a program to help with a minimalist literate programming pipeline. It
 takes code and "inverts it" - turns the code into examples and the code comments into 
-a human readable document.
+a human readable document. [@DonaldKnuthLiterateProgramming_2016_WebofStories-LifeStoriesofRemarkablePeople]
 
 ## Includes
 
@@ -13,11 +13,10 @@ files and concatenates strings, almost all of these imports are to support those
 activities.
 
 The _ardanlabs/conf_ include is a library to help make using command line parameters a
-bit easier. More can be seen on their website ...
-
-[@DonaldKnuthLiterateProgramming_2016_WebofStories-LifeStoriesofRemarkablePeople]
+bit easier. More can be seen on their website.
 
 */
+
 package main
 
 import (
@@ -34,6 +33,7 @@ This _build_ variable will be overwritten by our build script. This value will b
 the git hash of the current, build time commit.
 
 */
+
 var build = "develop"
 
 /*
@@ -41,6 +41,7 @@ var build = "develop"
 ## Run Wrapper
 
 */
+
 func run(log *log.Logger) error {
 	cfg := narrative.Config{}
 	if err := conf.Parse(os.Args[1:], "NT", &cfg); err != nil {
@@ -69,6 +70,7 @@ You've got to start somewhere.
 Here we just setup the logger and kick off the main _run_ method.
 
 */
+
 func main() {
 	log := log.New(os.Stdout, "NT: ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 
