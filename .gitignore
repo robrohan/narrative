@@ -1,5 +1,6 @@
 .DS_Store
 *~
+*.bak
 build
 
 # Testdata output
@@ -7,3 +8,4 @@ final.1.gz
 final.html
 final.md
 final.pdf
+manual.md
