@@ -44,3 +44,27 @@ func TestFindMarkerGo(t *testing.T) {
 		t.Fatalf(`FindMarker(".go") = %v, %v`, marker, err)
 	}
 }
+
+func TestFindBrokenExt(t *testing.T) {
+	markers := loadMarkers()
+	_, err := FindMarker(markers, "0")
+	if err == nil {
+		t.Fatalf(`Should throw error on short extension`)
+	}
+}
+
+func TestFindBrokenExt2(t *testing.T) {
+	markers := loadMarkers()
+	_, err := FindMarker(markers, "")
+	if err == nil {
+		t.Fatalf(`Should throw error on blank extension`)
+	}
+}
+
+func TestFindBrokenExt3(t *testing.T) {
+	markers := loadMarkers()
+	_, err := FindMarker(markers, ".你好")
+	if err == nil {
+		t.Fatalf(`Should throw error on not found utf8 extension`)
+	}
+}

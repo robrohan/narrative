@@ -167,7 +167,7 @@ should not be a problem.
 ---
 
 Note: while looking for an extension match, the _Ext_ array is expected to be in
-alpha order. If the first letter of the defined extension is before the first 
+alpha order. If the first letter of the defined extension is before the first
 letter of the sought after extension, the loop moves on to the next section.
 
 ---
@@ -178,11 +178,15 @@ indexed by extension instead.
 
 */
 func FindMarker(markers *CommentMarkers, extension string) (*Marker, error) {
+	if len(extension) < 2 {
+		return nil, errors.New("File extension must have at least a '.' and one character")
+	}
+
 	for i := range markers.Markers {
 		testExt := markers.Markers[i].Ext
 		for m := range testExt {
 			if testExt[m][0] > extension[1] {
-				break;
+				break
 			}
 			if string("."+testExt[m]) == extension {
 				return &markers.Markers[i], nil
