@@ -46,7 +46,6 @@ Markers_. A comment marker is a way to define an area we will use to look for ma
 text. Meaning, it becomes the human readable part of the application.
 
 */
-
 type CommentMarkers struct {
 	Markers []Marker `yaml:"Marker"`
 }
@@ -56,7 +55,6 @@ type CommentMarkers struct {
 A _Marker_ is a single file type's markdown area definition.
 
 */
-
 type Marker struct {
 	Ext   []string `yaml:"Ext"`
 	Start string   `yaml:"Start"`
@@ -102,6 +100,7 @@ func ParseNarrative(cfg Config, log *log.Logger) {
 	}
 	defer fout.Close()
 
+	log.Printf("Marker config: %s\n", cfg.Markers)
 	markers, err := ParseMarkerConfig(cfg.Markers)
 	if err != nil {
 		log.Fatal(err)
@@ -124,7 +123,7 @@ func ParseNarrative(cfg Config, log *log.Logger) {
 			continue
 		}
 		inputFile := fmt.Sprintf("%s%c%s", dir, filepath.Separator, line)
-		log.Println(inputFile)
+		log.Printf("Processing: %s\n", inputFile)
 
 		// call the main "markdown finding code" for this file
 		Parse(markers, log, inputFile, fout)
@@ -141,7 +140,6 @@ comment blocks should start and stop.
 */
 func ParseMarkerConfig(markersFile string) (*CommentMarkers, error) {
 	filename, _ := filepath.Abs(markersFile)
-	log.Println(filename)
 
 	yamlFile, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -163,22 +161,29 @@ func ParseMarkerConfig(markersFile string) (*CommentMarkers, error) {
 ## Find A Marker
 
 This function finds the maker definition based on the passed file extension. While
-this function "doesn't scale", the expected amount of configuation data means it
+this function "doesn't scale", the expected amount of configuration data means it
 should not be a problem.
 
 ---
 
-Note: The function double loops over the passed in yaml config file looking for the
-section that matches the extension. If this becomes a problem, the file could be
-indexed by extension instead.
+Note: while looking for an extension match, the _Ext_ array is expected to be in
+alpha order. If the first letter of the defined extension is before the first 
+letter of the sought after extension, the loop moves on to the next section.
 
 ---
+
+The function double loops over the passed in yaml config file looking for the
+section that matches the extension. If this becomes a problem, the file could be
+indexed by extension instead.
 
 */
 func FindMarker(markers *CommentMarkers, extension string) (*Marker, error) {
 	for i := range markers.Markers {
 		testExt := markers.Markers[i].Ext
 		for m := range testExt {
+			if testExt[m][0] > extension[1] {
+				break;
+			}
 			if string("."+testExt[m]) == extension {
 				return &markers.Markers[i], nil
 			}
@@ -227,11 +232,11 @@ func Parse(markers *CommentMarkers, log *log.Logger, filePath string, fout io.Wr
 			}
 		} else {
 			// line = strings.Trim(line, "\n ")
-			if line == marker.Start {
+			if strings.Trim(line, "\n ") == marker.Start {
 				code_mode = true
 				continue
 			}
-			if line == marker.End {
+			if strings.Trim(line, "\n ") == marker.End {
 				code_mode = false
 				continue
 			}
