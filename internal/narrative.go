@@ -30,11 +30,11 @@ type Config struct {
 
 /*
 
-# Comment Makers
+# Comment Markers
 
 In order to handle comments in different file types, we allow for different _Comment
-Markers_ - a comment marker is a way to define an area we will use to look for markdown
-text.
+Markers_. A comment marker is a way to define an area we will use to look for markdown
+text. Meaning, it becomes the human readable part of the application.
 
 */
 
@@ -63,10 +63,9 @@ files to include or exclude.
 
 The format of this file is:
 
-* A singe file per line
+* A singe file per line.
 * A '#' on the start of a line to denote a single line comment.
-
-The files will be processed in order.
+* The files will be processed in order they appear in the file..
 
 Some projects choose to create this file dynamically to
 include all files within the project. For example, you could add something like the
@@ -75,6 +74,8 @@ following before the build step:
 ```
 find ./ -name "*.tf" >> NARRATIVE
 ```
+
+You can then feed the _NARRATIVE_ file into the narrative process.
 
 */
 func ParseNarrative(cfg Config, log *log.Logger) {
@@ -121,6 +122,14 @@ func ParseNarrative(cfg Config, log *log.Logger) {
 	}
 }
 
+/*
+
+# Read Marker Config YAML
+
+This is some boilerplate code to read in the YAML file that describes how
+comment blocks should start and stop.
+
+*/
 func ParseMarkerConfig(markersFile string) (*CommentMarkers, error) {
 	filename, _ := filepath.Abs(markersFile)
 	log.Println(filename)
@@ -166,7 +175,7 @@ func FindMarker(markers *CommentMarkers, extension string) (*Marker, error) {
 			}
 		}
 	}
-	return nil, errors.New("Marker definintion not found. Edit narrative.yaml.")
+	return nil, errors.New("Marker definition not found. Edit narrative.yaml.")
 }
 
 /*
@@ -194,7 +203,6 @@ func Parse(markers *CommentMarkers, log *log.Logger, filePath string, fout io.Wr
 	if err != nil {
 		log.Fatal(err)
 	}
-	// fmt.Printf("Value: %#v\n", marker)
 
 	code_mode := false
 	scanner := bufio.NewScanner(file)
