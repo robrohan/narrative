@@ -1,6 +1,12 @@
 /*
 
-# Includes
+# Narrative
+
+Narrative is a program to help with a minimalist literate programming pipeline. It
+takes code and "inverts it" - turns the code into examples and the code comments into 
+a human readable document.
+
+## Includes
 
 Here we are importing several packages. Since this application mostly just combines
 files and concatenates strings, almost all of these imports are to support those
@@ -32,7 +38,7 @@ var build = "develop"
 
 /*
 
-# Run Wrapper
+## Run Wrapper
 
 */
 func run(log *log.Logger) error {
@@ -56,7 +62,7 @@ func run(log *log.Logger) error {
 
 /*
 
-# Program Main Entry
+## Program Main Entry
 
 You've got to start somewhere.
 

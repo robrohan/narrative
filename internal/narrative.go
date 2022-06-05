@@ -1,3 +1,12 @@
+/*
+
+# Narrative Package
+
+The narrative package holds most of the code.
+
+## Includes
+
+*/
 package narrative
 
 import (
@@ -15,7 +24,7 @@ import (
 
 /*
 
-# Config Struct
+## Config Struct
 
 This structure is used to hold the command line parameters passed when the application
 was started. Note that only _input_ is required, and _input_ needs to be a line separated
@@ -30,7 +39,7 @@ type Config struct {
 
 /*
 
-# Comment Markers
+## Comment Markers
 
 In order to handle comments in different file types, we allow for different _Comment
 Markers_. A comment marker is a way to define an area we will use to look for markdown
@@ -56,7 +65,7 @@ type Marker struct {
 
 /*
 
-# Parse the NARRATIVE File
+## Parse the NARRATIVE File
 
 The Narrative file is used to describe the parse order of the files - and also which
 files to include or exclude.
@@ -124,7 +133,7 @@ func ParseNarrative(cfg Config, log *log.Logger) {
 
 /*
 
-# Read Marker Config YAML
+## Read Marker Config YAML
 
 This is some boilerplate code to read in the YAML file that describes how
 comment blocks should start and stop.
@@ -151,7 +160,7 @@ func ParseMarkerConfig(markersFile string) (*CommentMarkers, error) {
 
 /*
 
-# Find A Marker
+## Find A Marker
 
 This function finds the maker definition based on the passed file extension. While
 this function "doesn't scale", the expected amount of configuation data means it
@@ -180,7 +189,7 @@ func FindMarker(markers *CommentMarkers, extension string) (*Marker, error) {
 
 /*
 
-# Parse a Code file and Extract the Markdown
+## Parse a Code file and Extract the Markdown
 
 While processing the files from the NARRATIVE file, we then look within the code
 file and find areas marked as markdown. We also "invert" the rest of the file
