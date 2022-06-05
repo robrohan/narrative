@@ -3,4 +3,5 @@
 header.md
 ../README.md
 ../cmd/narrative/main.go
+../internal/narrative.go
 footer.md

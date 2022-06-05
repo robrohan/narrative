@@ -12,13 +12,14 @@ build: clean
 	go build -o build/narrative -ldflags "-X main.build=${hash}" cmd/narrative/main.go
 
 test:
-	go test ./...
+	go test -v ./...
 
 # Combine all the source files into a single file
 # that can be used by all the to_* tasks below
 run:
 	rm -f $(PROJECT_DIR)/$(OUTPUT_NAME).md
 	go run cmd/narrative/main.go \
+		-m $(PROJECT_DIR)/narrative.yaml \
 		-i $(PROJECT_DIR)/NARRATIVE \
 		-o $(PROJECT_DIR)/$(OUTPUT_NAME).md
 
@@ -73,6 +74,7 @@ docker_run:
 	docker run --rm -it \
 		-v $(shell pwd):/root/workspace \
 		$(DOCKER_NAME) \
+			-m ./testdata/narrative.yaml \
 			-i ./testdata/NARRATIVE \
 			-o ./testdata/manual.md
 
